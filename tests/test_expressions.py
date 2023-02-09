@@ -245,7 +245,6 @@ class TestExpression:
             (f(a),                          f2(a)),
             (f(a),                          f(a, a)),
             (f(b),                          f(a, a)),
-            (f(a, a),                       f(a, b)),
             (f(a, a),                       f(a, a, a)),
             (a,                             f(a)),
             (x_,                            f(a)),

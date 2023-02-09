@@ -50,6 +50,7 @@ f(a)
 from abc import ABCMeta
 import keyword
 from enum import Enum, EnumMeta
+import numbers
 # pylint: disable=unused-import
 from typing import Callable, Iterator, List, NamedTuple, Optional, Set, Tuple, Type, Union
 # pylint: enable=unused-import
@@ -489,6 +490,8 @@ class Operation(Expression, metaclass=_OperationMeta):
         )
 
     def __lt__(self, other):
+        if isinstance(other, (numbers.Number, str)):
+            return False
         if not isinstance(other, Expression):
             return NotImplemented
         if not isinstance(other, type(self)) and not isinstance(self, type(other)):
@@ -498,7 +501,9 @@ class Operation(Expression, metaclass=_OperationMeta):
         if len(self.operands) != len(other.operands):
             return len(self.operands) < len(other.operands)
         for left, right in zip(self.operands, other.operands):
-            if left < right:
+            if left == right:
+                return False
+            elif left < right:
                 return True
             elif right < left:
                 return False
@@ -558,7 +563,8 @@ class Operation(Expression, metaclass=_OperationMeta):
         return False
 
     def _is_constant(self) -> bool:
-        return all(x.is_constant for x in self.operands)
+        return all(x.is_constant for x in self.operands if hasattr(x,
+            "is_constant"))
 
     def _is_syntactic(self) -> bool:
         if self.associative or self.commutative:
