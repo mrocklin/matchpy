@@ -510,8 +510,12 @@ class Operation(Expression, metaclass=_OperationMeta):
         return (self.variable_name or '') < (other.variable_name or '')
 
     def __eq__(self, other):
+        if isinstance(other, (numbers.Number, str)):
+            return False
         if not isinstance(other, type(self)):
             return NotImplemented
+        if self is other:
+            return True
         return (
             len(self.operands) == len(other.operands) and all(x == y for x, y in zip(self.operands, other.operands)) and
             self.variable_name == other.variable_name
